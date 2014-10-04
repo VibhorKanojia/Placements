@@ -1,0 +1,35 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+
+int main(){
+	int testcases;
+	cin >> testcases;
+	while (testcases > 0){
+		//cout<<"hello"<<endl;
+		long low;
+		long high;
+		long i;
+		if (low%2 == 0){
+			i = low+1;
+		}
+		else {
+			i = low;
+		}
+		cin >> low >> high;
+	//	cout<<low<< " " << high<< " hl "<<endl;
+		cout<<" i "<<i<<endl;
+		while (i<= high){
+			long val = (long) pow(2,i);
+			cout<<val<<endl;
+			if ((val-2) % i == 0){
+				cout<<i<<endl;
+			}
+			i= high+1;
+		}
+		
+		testcases--;
+	}
+}
+	
