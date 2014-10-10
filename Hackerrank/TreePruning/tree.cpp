@@ -16,6 +16,10 @@ struct Node{
 list<struct Node *> allNodes;
 list<struct Node *>::iterator it;
 
+struct data{
+	long long cum_weight;
+	int index;
+};
 
 void addtoTree(int u, int v){
 	list<struct Node *>::iterator it1;
@@ -66,8 +70,11 @@ void printTree(){
 	}
 }
 
-long long fillWeights(long long * sub_weights, Node * cur_root){
-	int arr_index = cur_root->index -1;
+long long fillWeights(vector<struct data> & sub_weights, Node * cur_root){
+
+	if (allNodes.size() == 0){
+		return -1;
+	}
 	long val = cur_root->value;
 
 	if ((cur_root->children.size()) != 0 ){	
@@ -76,69 +83,85 @@ long long fillWeights(long long * sub_weights, Node * cur_root){
 			val = val + fillWeights(sub_weights, (*newit));
 		}
 	}
-
-	sub_weights[arr_index] = val;
+	struct data mydata = *new data;
+	mydata.cum_weight = val;
+	mydata.index = cur_root->index;
+	sub_weights.push_back(mydata);
 	return val;
 }
 
-void printWeights(long long * array, int N){
-	for (int i = 0 ; i < N ; i++){
-		cout<<array[i]<<" ";
+void printWeights(vector<data> & array){
+	cout<<"size is " <<array.size()<<endl;
+	for (int i = 0 ; i < array.size() ; i++){
+		cout<<array[i].cum_weight<<" ";
 	}
 	cout<<endl;
 }
 
-int findMin(long long * sub_weights, int N){
+int findMin(vector<data> & sub_weights){
 	int mymin = 0;
-	for (int i = 0 ; i< N ; i++){
-		if (sub_weights[mymin] >= sub_weights[i]){
+ 
+	for (int i = 0 ; i< sub_weights.size() ; i++){
+		if (sub_weights[mymin].cum_weight >= sub_weights[i].cum_weight && sub_weights[i].index != 1){
 			mymin = i;
 		}
 	}
-	return mymin;
+	
+	return sub_weights[mymin].index;
 }
 
-void deleteNode(long long * sub_weights,int N, int K){
-	for (int i = 0 ; i < K ; i++){
-		//cout<<"entered"<<endl;
-		int nodeindex = findMin(sub_weights, N);
-		if (nodeindex == 0){
-			cout<<0<<endl;
-			return;
+void deleteNode(list<Node *>::iterator mynode){
+	list<Node *>:: iterator itt;
+	for (itt= allNodes.begin() ; itt !=allNodes.end() ; itt++){
+		if ((*itt)->parent == *mynode){
+			deleteNode(itt);
+			itt--;
 		}
-		//cout<<"node index is "<<nodeindex<<endl;
+	}
+	if ((*mynode)->parent != NULL){
+		list<Node *>::iterator itt2;
+		for (itt2 = (*mynode)->parent->children.begin() ; itt2 != (*mynode)->parent->children.end() ; itt2++){
+			if ((*itt2)->index == (*mynode)->index){
+				(*mynode)->parent->children.erase(itt2);
+				break;
+			}
+		}
+	}	
+			
+	allNodes.erase(mynode);
+}
+
+
+void deleteFunction(vector<data> & sub_weights, int K){
+	long long init_ans = sub_weights[sub_weights.size()-1].cum_weight;
+	long long final_ans = 0 > init_ans ? 0 : init_ans;
+	for (int i = 0 ; i < K ; i++){
+		int nodeindex = findMin(sub_weights);
+		cout<<"Node index is "<<nodeindex<<endl;
 		list<Node *>:: iterator itt;
 		list<Node *>:: iterator itt2;
-		itt=allNodes.begin() ;
-		advance(itt,nodeindex);
-		//cout<<"itt index "<<(*itt)->index<<endl;
-		Node * myparent = (*itt)->parent;
-		while (myparent != NULL){
-			sub_weights[myparent->index -1] -= sub_weights[nodeindex];
-			myparent = myparent->parent;
+		itt=allNodes.begin();
+		while((*itt)->index != nodeindex){
+			itt++;
 		}
-		sub_weights[nodeindex] = 10000000000;
-		//printTree();
-		
-		for (itt2 = allNodes.begin() ; itt2 != allNodes.end() ; itt2 ++){
-		//	cout<<(*itt2)->value<<endl;
-			
-			if ((*itt2)->parent != NULL){
-			//	cout<<"parent is "<<(*itt2)->parent->index<<endl; 
-				if ((*itt2)->parent == (*itt)){
-					sub_weights[(*itt2)->index -1] = 10000000000;
-					allNodes.erase(itt2);
-					itt2--;
-				}
-			}
-			else{
-			//	cout<<"parent Null"<<endl;
-			}	
+		//cout<<(*itt)->index<<endl;
+		deleteNode(itt);
+		//cout<<"here"<<endl;
+		sub_weights.clear();
+		//cout<<"here2"<<endl;
+		//cout<<"New size "<<allNodes.size()<<endl;
+		fillWeights(sub_weights,*allNodes.begin());
+		if (allNodes.size() == 0){
+			final_ans= 0 >final_ans ? 0 : final_ans ;
+			cout<<final_ans<<endl;
+			return;
 		}
-		
-		allNodes.erase(itt);
-		//printTree();
-	}
+		else{
+			long long we = sub_weights[sub_weights.size()-1].cum_weight;
+			final_ans = final_ans > we ? final_ans : we;
+		}
+	} 
+	cout<<final_ans<<endl;
 }
 
 int main() {
@@ -148,12 +171,12 @@ int main() {
 	cin >> K;
 	constructTree(N);
 	//printTree();
-    long long sub_weights[N];
+    vector<struct data> sub_weights;
     fillWeights(sub_weights,*allNodes.begin());
+    printWeights(sub_weights);
+    deleteFunction(sub_weights, K);
     //printWeights(sub_weights, N);
-    deleteNode(sub_weights, N, K);
-    //printWeights(sub_weights, N);
-    cout<<sub_weights[0]<<endl;
+    //cout<<sub_weights[0]<<endl;
    // cout<<"Size left "<<allNodes.size()<<endl;
     return 0;
 }
