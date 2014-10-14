@@ -27,25 +27,17 @@ void fillMax(vector<int> & array, vector<int> & max_array){
 
 void calculateProfit(vector<int> & array, vector<int> & max_array){
 	int N = array.size();
-	int profit = 0;
+	long long profit = 0;
 	int num_shares = 0;
-	int flag = 0;
 	for (int i = 0 ; i < N ; i++){
 		if (array[i] < max_array[i]){
-			profit = profit - array[i];
+			profit = profit - array[i];	
 			num_shares++;
 		}
 		else if (array[i] == max_array[i]){
-			profit = profit + array[i]*num_shares;
+			profit = profit + (long long)array[i]*num_shares;
 			num_shares = 0;
 		}
-		else{
-			cout<<"bc"<<endl;
-		}
-		if (flag % 1000 == 0){
-			cout<<"Profit is "<<profit<<endl;
-		}
-		flag++;
 	}
 	cout<<profit<<endl;
 }
