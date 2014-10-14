@@ -3,17 +3,51 @@
 #include <vector>
 using namespace std;
 
-
-
-int applyDP(int cost,int index, int num_shares, vector<int> array, vector<int> memo){
+void printArray(vector<int> & array){
 	int N = array.size();
-	if (index > N-1){
-		return -1*cost;
+	
+	for (int i =0 ; i < N ; i++){
+		cout<<array[i]<<" ";
 	}
-	int earning1 = applyDP(cost-array[index]*num_shares,index+1,0,array,memo);
-	int earning2 = applyDP(cost+array[index], index+1, num_shares+1, array,memo);
-	int earning3 = applyDP(cost, index+1, num_shares, array,memo);
-	return max(earning1, max(earning2, earning3));
+	cout<<endl;
+}
+
+void fillMax(vector<int> & array, vector<int> & max_array){
+		int N = array.size();
+		max_array[N-1] = array[N-1];
+		for (int i = N-2 ; i >= 0 ; i--){
+			if (array[i] >= max_array[i+1]){
+				max_array[i] = array[i];
+			}
+			else{
+				max_array[i] = max_array[i+1];
+			}
+		}
+}
+
+void calculateProfit(vector<int> & array, vector<int> & max_array){
+	int N = array.size();
+	int profit = 0;
+	int num_shares = 0;
+	int flag = 0;
+	for (int i = 0 ; i < N ; i++){
+		if (array[i] < max_array[i]){
+			profit = profit - array[i];
+			num_shares++;
+		}
+		else if (array[i] == max_array[i]){
+			profit = profit + array[i]*num_shares;
+			num_shares = 0;
+		}
+		else{
+			cout<<"bc"<<endl;
+		}
+		if (flag % 1000 == 0){
+			cout<<"Profit is "<<profit<<endl;
+		}
+		flag++;
+	}
+	cout<<profit<<endl;
 }
 
 int main(){
@@ -24,13 +58,16 @@ int main(){
 		int N;
 		cin >> N;
 		vector<int> array;
-		vector<int> memo(N,0);
+		vector<int> max_array(N,0);
 		for (int i = 0 ; i < N ; i++){
 			int a;
 			cin >> a;
 			array.push_back(a);
 		}
-		int ans = applyDP(0,0,0,array,memo);
-		cout<<ans<<endl;	
+		fillMax(array, max_array);
+		//printArray(array);
+		//printArray(max_array);
+		calculateProfit(array,max_array);
+		
 	}
 }
