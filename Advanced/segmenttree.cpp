@@ -4,8 +4,16 @@
 
 using namespace std; 
 
+
+void printArray(int * array, int size){
+	for (int i = 0 ; i < size ; i++){
+		cout<<array[i]<<" ";
+	}
+	cout<<endl;
+}
+
 void initializeTree(int * tree, int tree_size, int * array, int N, int start, int end, int node_num){
-	cout<<"start "<<start<<" end "<<end<<" node "<< node_num<<endl;
+	//cout<<"start "<<start<<" end "<<end<<" node "<< node_num<<endl;
 	if (start == end){
 		tree[node_num] = start;
 	}
@@ -14,7 +22,7 @@ void initializeTree(int * tree, int tree_size, int * array, int N, int start, in
 		initializeTree(tree, tree_size, array, N, start, (start+end)/2, 2*node_num);
 		initializeTree(tree, tree_size, array, N, (start+end)/2 + 1 ,end, 2*node_num +1);
 		
-		if (array[tree[2*node_num]] <= array[tree[2*node_num+1]]){
+		if (array[tree[2*node_num ]] <= array[tree[2*node_num + 1]]){
 			tree[node_num] = tree[2*node_num];
 		}
 		else {
@@ -37,25 +45,42 @@ int queryGETMIN(int * tree, int tree_size, int * array, int N, int qstart, int q
 	int rightresult = queryGETMIN(tree, tree_size, array, N, qstart, qend, (start+end)/2 + 1, end, 2*node_num +1);
 	
 	if (leftresult == -1) {
-		tree[node_num] = rightresult;
 		return rightresult;
 	}
 
 	if (rightresult == -1) {
-		tree[node_num] = leftresult;
 		return leftresult;
 	}
-
-	//if (rightresult == -1) return leftresult;
-	//if (leftresult == -1) return rightresult; 
+ 
 	if (array[rightresult] <= array[leftresult]){
-		tree[node_num] = rightresult;
     	return rightresult;
     }
     else{
-    	tree[node_num] = leftresult;
     	return leftresult;
     }
+}
+
+void UPDATE(int * tree, int tree_size , int * array, int N, int index, int newval, int start, int end, int node_num){
+	if (!(start <= index && index <= end)){
+		return;
+	}
+	else{
+		if (start == end){
+			tree[node_num] = index;
+		}
+
+		else{
+			UPDATE(tree, tree_size, array, N, index, newval, start, (start+end)/2 , 2*node_num);
+			UPDATE(tree, tree_size, array, N, index, newval, (start+end)/2 + 1, end, 2*node_num + 1);
+
+			if (array[tree[2*node_num]] <= array[tree[2*node_num + 1]]){
+				tree[node_num] = tree[2*node_num];
+			}  
+			else{
+				tree[node_num] = tree[2*node_num + 1];
+			}
+		}
+	}
 }
 
 
@@ -64,20 +89,23 @@ int main(){
 	cin >> N;
 
 	int array[N];
-	int tree_size = 20;
+	int tree_size = 4*N + 1;
 	int tree[tree_size];
 
 
 	for (int i = 0 ; i < N ; i++){
-		cin >> array[N];
+		cin >> array[i];
 	}
+
 	for (int i = 0 ; i < tree_size ; i++){
 		tree[i] = -1;
 	}
 
 	initializeTree(tree, tree_size, array, N, 0, N-1, 1);
 
-
+	//printArray(array, N);
+	//cout<<endl<<endl;
+	//printArray(tree, tree_size);
 
 	string query;
 	while(cin>>query){
@@ -89,7 +117,11 @@ int main(){
 			cout<<array[ans]<<endl;
 		}
 		else if (query == "UPDATE"){
-		//	queryUPDATE();
+			int ind, newval;
+			cin >> ind;
+			cin >> newval;
+			array[ind] = newval;
+			UPDATE(tree, tree_size, array, N, ind, newval, 0, N -1 , 1);
 		}
 		else{
 			cout<<"Invalid Query"<<endl;
