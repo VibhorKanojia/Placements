@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<script type="text/javascript">
+  var flag = 0;
+	function nextScreen()
+    { if (flag == 0){
+    	document.getElementById("first").style.visibility="hidden";
+      document.getElementById("second").style.visibility="visible";
+      document.getElementById("nextbutton").innerHTML = "Agree";
+      document.getElementById("agreement").style.visibility="visible";
+      flag =1;
+      }
+      else if (flag == 1){
+      document.getElementById("second").style.visibility="hidden";
+      document.getElementById("third").style.visibility="visible";
+      document.getElementById("nextbutton").innerHTML = "Install";
+      document.getElementById("agreement").style.visibility="hidden";
+      flag =2;
+      }
+    }
+    function openApplication()
+    {
+      document.getElementById("first").style.visibility="visible";
+      document.getElementById("nextbutton").style.visibility="visible";
+      document.getElementById("cancelbutton").style.visibility="visible";
+      document.getElementById("closebutton").style.visibility="visible";
+    }
+    function cancelApplication() {
+      if (confirm("Are you sure you want to quit the Setup ?")){
+        confirm("You are too late! ... bwahahaha");
+      } 
+    }
+
+</script>
+
+  <meta charset="UTF-8">
+
+  <title>CodePen - 3D-ish Button</title>
+
+    <link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
+
+</head>
+
+<body>
+
+  <body>
+    <a id="logo-zone" onclick="openApplication()" href="#"></a>
+  	<div class="mydiv">
+  	<img id="first" class="setup" src="setupstep1.png" style="position:absolute; visibility:hidden"></img>
+  	<img id="second" class="setup" src="setupstep2.png" style="position:absolute; visibility:hidden"></img>
+    <img id="third" class="setup" src="install.png" style="position:absolute; visibility:hidden"></img>
+  	<button class="button" id="nextbutton" style="top:420px;left:380px;visibility:hidden" onclick= "nextScreen()">Next ></button>
+  	<button class="button" id="cancelbutton" style="top:420px;left:480px;visibility:hidden" onclick="cancelApplication()">Cancel</button>
+    <button class="button" id="closebutton" style="top:45px;left:553px;visibility:hidden;width:23px;height:23px;padding:2px 2px 2px 2px;color:white;background-color:#d84f2d;background-image:none;border-color:#fff" onclick="cancelApplication()">X</button>
+    <div class="agreement" id="agreement" style="visibility:hidden">
+      <p>IMPORTANT LEGAL NOTICE TO ARCHITA BHANDARI. CAREFULLY READ THE FOLLOWING LEGAL AGREEMENT BEFORE YOU START USING THE SOFTWARE.</p>
+      <p><b>TERMS AND CONDITIONS:</b>
+        <ul>
+          <li>first point</li>
+          <li>second point</li>
+        </ul>
+      </p>
+
+    </div>
+  <div>
+</body>
+
+</body>
+
+</html>
