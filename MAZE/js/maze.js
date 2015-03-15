@@ -1,7 +1,3 @@
-/* Represents a maze. The maze is a path through a grid, with some of the grid's
- * walls missing. The dimensions of the grid (the width and height) are in terms
- * of these cells.
- */
 function Maze(width, height) {
     var cells = [],
         visited = 0, // The number of cells already visited.
@@ -49,9 +45,7 @@ function Maze(width, height) {
     
     /* Visits each unvisited cell, starting with the given one, randomly
      * traveling to adjacent cells and knocking out the walls between them to
-     * create the maze. The optional direction argument is the direction the
-     * visit _came from_. That is, if you visit cell (1, 2) from cell (0, 2),
-     * the direction would be "e" (east).
+     * create the maze.
      */
     function visit(cell, direction) {
         cell.visited = true;
@@ -87,7 +81,9 @@ function Maze(width, height) {
 
     var startX = Math.floor(Math.random() * width),
         startY = Math.floor(Math.random() * height);
-    visit(cells[startX][startY]);
+    visit(cells[startX][startY]); // starting cell
+
+
 
     /* Returns an array of cells that are a path from the cell specified in the
      * first two coordinates to the cell specified in the last two coordinates.
@@ -153,7 +149,32 @@ function Maze(width, height) {
      * can be gradients or patterns as well.
      */
 
-
+     this.roundRect = function (ctx, x, y, width, height, radius, fill, stroke) {
+        if (typeof stroke == "undefined" ) {
+            stroke = false;
+        }
+        if (typeof radius === "undefined") {
+            radius = 5;
+        }
+        ctx.fillStyle="#09C";
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        if (stroke) {
+            ctx.stroke();
+        }
+        if (fill) {
+            ctx.fill();
+        }        
+    };
 
      
 
@@ -161,9 +182,8 @@ function Maze(width, height) {
         if (typeof canvas == "string") {
             canvas = document.getElementById(canvas);
         }
-        step = step || 10;
         colors = colors || {};
-        colors.wall = "#000000";
+        colors.wall = "#09C";
         colors.background = "#FFFFFF";
         colors.start = colors.start || "#33FF66";
         colors.end = colors.end || "#FF6633";
@@ -198,27 +218,33 @@ function Maze(width, height) {
 
                 if (cell.walls.n) {
                     context.fillRect(actualX, actualY, step, 5);
+                    //this.roundRect(context, actualX,actualY,5,step,true,false);
+
                 }
                 if (cell.walls.e) {
                     context.fillRect(actualX + step, actualY, 5, step);
+                    //this.roundRect(context, actualX+step, actualY, step, 5,true,false);
                 }
                 if (cell.walls.s) {
                     context.fillRect(actualX, actualY + step, step, 5);
+                  //  this.roundRect(context, actualX, actualY + step, 5, step,true,false);
                 }
                 if (cell.walls.w) {
                     context.fillRect(actualX, actualY, 5, step);
+                   // this.roundRect(context, actualX, actualY, step, 5, true, false);
+
                 }
             }
         }
 
         // Fill in a start and end block:
-         context.fillStyle = 'green';
+         context.fillStyle = '#006080';
          context.fillRect(5, 5, step - 5, step - 5);
            
         //context.fillRect(1, 1, step - 1, step - 1);
-        context.fillStyle = colors.end;
-        context.fillRect((width - 1) * step + 1, (height - 1) * step + 1,
-                         step - 1, step - 1);
+        context.fillStyle = '#003243';
+        context.fillRect((width - 1) * step + 5, (height - 1) * step + 5,
+                         step , step );
 
         
 
@@ -229,7 +255,7 @@ function Maze(width, height) {
             if (typeof canvas == "string") {
                 canvas = document.getElementById(canvas);
             }
-            color = color || "#DDDD66";
+            color = "#ccf2ff";
 
             try {
 	        var context = canvas.getContext('2d');
@@ -248,26 +274,26 @@ function Maze(width, height) {
             
             for (var i = 0; i < solution.length; i++) {
                 var position = actualPosition(solution[i]);
-                context.fillRect(position[0] + 1, position[1] + 1, step - 1,
-                                 step - 1);
+                context.fillRect(position[0] + 5, position[1] + 5, step - 5,
+                                 step - 5);
             }
         };
 
 
-        this.isValid = function(canvas,step,direction,val_right,val_up){
-            if (direction == "up" && cells[val_right][val_up].walls.n){
+        this.isValid = function(canvas, step, direction, cell_x, cell_y){
+            if (direction == "up" && cells[cell_x][cell_y].walls.n){
                 //window.alert("can't move up");
                 return false;
             }
-            else if (direction == "down" && cells[val_right][val_up].walls.s){
+            else if (direction == "down" && cells[cell_x][cell_y].walls.s){
                 //window.alert("can't move down");
                 return false;
             }
-            else if (direction == "right" && cells[val_right][val_up].walls.e){
+            else if (direction == "right" && cells[cell_x][cell_y].walls.e){
                 //window.alert("can't move right");
                 return false;
             }
-            else if (direction == "left" && cells[val_right][val_up].walls.w){
+            else if (direction == "left" && cells[cell_x][cell_y].walls.w){
                 //window.alert("can't move left");
                 return false;
             }
@@ -278,12 +304,13 @@ function Maze(width, height) {
         }
 
 
-        this.drawCircle = function (canvas, step, val_right,val_up){
+        this.drawCircle = function (canvas, step, val_right,val_up, player,width){
             
+
             if (typeof canvas == "string") {
              canvas = document.getElementById(canvas);
             }
-            step = step || 10;
+        
             
             try {
                 var context = canvas.getContext('2d');
@@ -291,26 +318,82 @@ function Maze(width, height) {
                 window.alert("problem");
                 return;
             }
+            if (player == 1){
+                context.fillStyle = '#006080';
+            }
+            else if (player == 2){
+                context.fillStyle = 'blue';
+            }
             
-            context.fillStyle = 'green';
+            //this.roundRect(context, 5+val_right*step, 5+val_up*step, step - 5, step - 5,true,false);
             context.fillRect(5+val_right*step, 5+val_up*step, step - 5, step - 5);
+
+            if (val_right == width -1 && val_up == width -1){
+                if (player == 1){
+                    window.alert("Player 1 Won");
+                }
+
+                else if (player == 2){
+                    window.alert("Player 2 Won");
+                }   
+            }
             /*
             context.beginPath();
             
-            context.arc(1+val_right*step+step/3,1+val_up*step+step/3,step/3,0,2*Math.PI);    
+            context.arc(1+val_right_one*step+step/3,1+val_up_one*step+step/3,step/3,0,2*Math.PI);    
             //context.arc(1+val*step+step/3,1+step/2,step/3,0,2*Math.PI);
             context.closePath();
             context.fill();
             */
             
         };
-
-
-        this.removeCircle = function (canvas, step, val_right, val_up){
+                
+        this.destroyWall = function (canvas, step, val_right,val_up, player, width, direction){
             if (typeof canvas == "string") {
              canvas = document.getElementById(canvas);
             }
-            step = step || 10;
+            
+            try {
+                var context = canvas.getContext('2d');
+            } catch (e) {
+                window.alert("problem");
+                return;
+            }
+            var cell = cells[val_right][val_up];
+            if (direction == "up"){
+                cell.walls.n = false;
+                cells[val_right][val_up-1].walls.s = false;
+                context.fillStyle = 'white';
+                context.fillRect(cell.x*step, cell.y*step, step, 5);
+
+            }
+            else if (direction == "down"){
+                cell.walls.s = false;
+                context.fillStyle = 'white';
+                cells[val_right][val_up+1].walls.n = false;
+                context.fillRect(cell.x*step, cell.y*step + step, step, 5);
+
+            }
+            else if (direction == "left"){
+                cell.walls.w = false;
+                context.fillStyle = 'white';
+                cells[val_right-1][val_up].walls.e = false;
+                context.fillRect(cell.x*step, cell.y*step, 5, step);
+
+            }
+            else if (direction == "right"){
+                cell.walls.e = false;
+                context.fillStyle = 'white';
+                cells[val_right+1][val_up].walls.w = false;
+                context.fillRect(cell.x*step+step, cell.y*step, 5, step);
+
+            }
+        }
+
+        this.removeCircle = function (canvas, step, val_right, val_up){             // removing the previous mark
+            if (typeof canvas == "string") {
+             canvas = document.getElementById(canvas);
+            }
             
             try {
                 var context = canvas.getContext('2d');
@@ -324,7 +407,7 @@ function Maze(width, height) {
 
             /*
             context.beginPath();
-            context.arc(1+val_right*step+step/3,1+val_up*step+step/3,step/3,0,2*Math.PI);    
+            context.arc(1+val_right_one*step+step/3,1+val_up_one*step+step/3,step/3,0,2*Math.PI);    
             context.closePath();
             
             context.fill();
