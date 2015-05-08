@@ -12,7 +12,7 @@ int final_sum;
 
 int findLCM(vector<int> & choice){
 	int num1 = choice[0];
-	for (int i = 1 ; i < choice.size() ; i++){
+	for (int i = 1 ; i < choice.size() ; i++){			// LCM = Product / HCF
 		int num2 = choice[i];
 		int c = num1*num2;
 		while (num1 != num2){
@@ -23,7 +23,7 @@ int findLCM(vector<int> & choice){
 				num2 =num2-num1;
 			}
 		}
-		num1 = c/num1;
+		num1 = c/num1;						// num1 => HCF ; c => product
 	}
 	return num1;
 }
