@@ -1,50 +1,48 @@
 #include <iostream>
-#include <string>
-#include <cstdio>
-#define gc getchar_unlocked
-#define MAX_N 1000000000
+#include <cstring>
+#include <cstdio>       
 using namespace std;
 
 
-void scanint(int &x){
-        register int c = gc();
-        x = 0;
-        for (; (c < 48 || c > 57) ; c=gc());
-        for (; ( c > 47 && c < 58) ; c=gc()){
-                x = (x<<1) + (x<<3) + c-48;
-        }
-}
-
-
-void scanword(string &s){
-        s = "";
-        register char c = gc();
-        while (c != ' ' || c!= '\n'){
-                s = s + c;
-                c = gc();
-        }
-}
-
-
-void scanline(string &s){
-        s ="";
-        register char c = gc();
-        while (c!= '\n'){
-                s = s + c;
-                c = gc();
-        }       
-}
-
+// PRIMALITY TEST
 
 int main(){
+        
         int testcases;
-        scanint(testcases);
-        bool primes[MAX_N];
-        memset(primes, 0, sizeof(primes));
-        int i = 2;
-        while( i < MAX_N){
+        cin >> testcases;
+        while(testcases--){
+                int L,R;
+                cin >> L;
+                cin >> R;
 
-        }       
+                for (int i=L; i<=R ; i++){
+                        if (i == 1){
+                                continue;
+                        }
+                        if (i <= 3){
+                                cout<<i<<endl;
+                        }
+                        else if (i%2 == 0 || i%3 == 0){
+                                continue;
+                        }
+                        else {
+                                int num = 5;
+                                int flag = 0;
+                                while (num*num <= i){
+                                        if (i% num == 0 || i% (num+2) == 0){
+                                                flag = 1;
+                                                break;
+                                        }
+                                        num = num + 6;
+                                }
+                                if (flag ==0){
+                                        cout<<i<<endl;
+                                }
+                        }
+
+                }
+                cout<<endl;
+        }
 
         return 0;
 
