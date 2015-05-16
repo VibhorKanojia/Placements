@@ -2,32 +2,41 @@
 #include <cstring>
 #include <vector>
 using namespace std;
+#define MAX_N 10000001
 
-void factorize(int &temp, int & evencount, int & oddcount, int & index){
+vector<int> primes;
+
+void markMultiples(int i, bool * array){
+        int index = 2;
+        while (i*index < MAX_N){
+                array[i*index] = 1;
+                index++;
+        }
+        return;
+}
+
+void factorize(int &temp, int & evencount, int & oddcount, int index){
         if (temp == 1) return;
-        if (temp % index != 0){
-                index = index + 1;
-                factorize(temp, evencount, oddcount, index);
+        if (temp % primes[index] != 0){
+                factorize(temp, evencount, oddcount, index + 1);
                 return;
         }
         int val = 0;
-        while(temp % index == 0){
+        while(temp % primes[index] == 0){
                 val++;
-                temp = temp/index;
+                temp = temp/primes[index];
         }
         if (val % 2 == 0) evencount++;
         else oddcount++;
-        index = index+1;
-        factorize(temp, evencount, oddcount, index);
+        factorize(temp, evencount, oddcount, index+1);
         return;
 }
 
 bool checkPsycho(int temp){
         int evencount = 0;
         int oddcount = 0;
-        int index = 2;
-        int curtemp = temp;
-        factorize(curtemp, evencount, oddcount, index);
+        int index = 0;
+        factorize(temp, evencount, oddcount, index);
         if (evencount > oddcount){
                 return true;
         }
@@ -37,6 +46,18 @@ bool checkPsycho(int temp){
 }
 
 int main(){
+
+        bool * array;
+        array = new bool[MAX_N];
+        memset(array, 0, sizeof(array));
+        for (int i = 2 ; i < MAX_N ; i++){
+                if (array[i] == 0){
+                        primes.push_back(i);
+                        markMultiples(i, array);
+                }
+        }
+
+
         int testcases;
         cin >> testcases;
         while (testcases--){
