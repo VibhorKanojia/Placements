@@ -22,14 +22,14 @@ int main(){
 
     int size = s.size();
     int suffixArray[size];
-    int totalCounts = (log(size)/log(2)) + 1;
-    int ** p = new int*[totalCounts+1];
+    int totalCounts = (log(size)/log(2)) + 1;               
+    int ** p = new int*[totalCounts+1];         //totalcount + 1 : IMPORTANT
     for (int i= 0 ; i < totalCounts+1 ; i++){
         p[i] = new int[size];
     }
 
     for (int i = 0 ; i < size ; i++){
-        p[0][i] = s[i] - 'a';
+        p[0][i] = s[i] - 'a';               //p[step][0] = mississippi's rank for this step
     }
 
     int step = 1;
@@ -57,8 +57,10 @@ int main(){
         step++;
     }
     for (int i = 0 ; i < size ; i++){
-        suffixArray[p[step-1][i]] = i;
+        suffixArray[p[step-1][i]] = i;              // if mississpi's rank is 5 then put mississippi on number 5 in suffix array
+        cout<<p[step-1][i]<<endl;                   // therefore, we can say that p is actually inverse of suffix array
     }
+    cout<<endl<<endl;
     for (int i = 0 ; i < size ; i++){
         cout<<suffixArray[i]<<endl;
     } 
