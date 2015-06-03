@@ -29,7 +29,7 @@ int main(){
     }
 
     for (int i = 0 ; i < size ; i++){
-        p[0][i] = s[i] - 'a';               //p[step][0] = mississippi's rank for this step
+        p[0][i] = s[i];               //p[step][0] = mississippi's rank for this step
     }
 
     int step = 1;
@@ -56,11 +56,17 @@ int main(){
 
         step++;
     }
-    for (int i = 0 ; i < size ; i++){
-        suffixArray[p[step-1][i]] = i;              // if mississpi's rank is 5 then put mississippi on number 5 in suffix array
-        cout<<p[step-1][i]<<endl;                   // therefore, we can say that p is actually inverse of suffix array
+
+    if (size == 1){                // if string is of size 1 then it creates a problem, because loop doesn't run
+        p[0][0] = 0; 
+        suffixArray[0] = 0;
     }
-    cout<<endl<<endl;
+    else{
+        for (int i = 0 ; i < size ; i++){
+            suffixArray[p[step-1][i]] = i;      // if mississpi's rank is 5 then put mississippi on number 5 in suffix array
+        }                                                   // therefore, we can say that p is actually inverse of suffix array
+    }
+
     for (int i = 0 ; i < size ; i++){
         cout<<suffixArray[i]<<endl;
     } 

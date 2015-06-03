@@ -28,7 +28,7 @@ int main(){
   }
 
   for (int i = 0 ; i < n ; i++){
-    inverseSuffix[0][i] = s[i] - 'a';
+    inverseSuffix[0][i] = s[i];
   }
 
   struct info rankArray[n];
@@ -50,11 +50,15 @@ int main(){
 
      step++;
   }
-
-  for (int i = 0 ; i < n ; i++){
-    suffixArray[inverseSuffix[step-1][i]] = i;
+  if (n == 1){
+    inverseSuffix[0][0] = 0; 
+    suffixArray[0] = 0;
   }
-
+  else{
+    for (int i = 0 ; i < n ; i++){
+      suffixArray[inverseSuffix[step-1][i]] = i;
+    }
+  }
 
   cout<<"SUFFIX ARRAY FOR "<<s<<endl;
   for (int i = 0 ; i < n ; i++){
