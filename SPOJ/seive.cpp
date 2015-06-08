@@ -2,7 +2,7 @@
 #include <cstring>
 #include <cstdio>       
 #define gc getchar_unlocked
-#define MAX_N 1000000000
+#define MAX_N 6000000
 using namespace std;
 
 
@@ -64,7 +64,7 @@ int main(){
 
                 for (int i=L; i<=R ; i++){
                         if (primes[i] == 0){
-                                cout<<i<<endl;
+                                cout<<i<<", ";
                         }
                 }
                 cout<<endl;
