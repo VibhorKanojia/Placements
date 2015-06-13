@@ -13,7 +13,7 @@ void printArray(int * array, int size){
 }
 
 void initializeTree(int * tree, int tree_size, int * array, int N, int start, int end, int node_num){
-	//cout<<"start "<<start<<" end "<<end<<" node "<< node_num<<endl;
+	
 	if (start == end){
 		tree[node_num] = start;
 	}

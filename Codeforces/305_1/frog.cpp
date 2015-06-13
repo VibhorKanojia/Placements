@@ -19,6 +19,7 @@ int main(){
 
   bool flagArray1[m];
   bool flagArray2[m];
+  
   for (int i = 0 ; i < m ; i++){
     flagArray1[i] = 0;
     flagArray2[i] = 0;
