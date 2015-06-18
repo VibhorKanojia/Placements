@@ -1,61 +1,47 @@
 #include <bits/stdc++.h>
-
+#define MAXN 100001
 using namespace std;
 
-map<char,int>::iterator it;
-map<char,int>::iterator it1;
-int b1;
-int b2;
-int b3;
-int b4;
-
-int countFunction(map<char,int> amap, map<char,int> bmap, map<char,int> cmap){
-  int count1 = 0;
-  int minval = 100000000;
+void countFunction(int* amap, int* bmap, int* cmap,string a,string b, string c){
+  int minval = MAXN;
   
-  for (it = bmap.begin() ; it != bmap.end() ; it++){
-    int val2 = it->second;
-    it1 = amap.find(it->first);
-    if (it1 == amap.end()){
-      minval = 0;
-      break;
-    }
-
-    else{
-      int val1 = it1->second;
-      int divnum = val1/val2;
-      minval = min(divnum,minval);
-    }
+  for (int i = 0 ; i < 26 ; i++){
+    if (bmap[i]) minval = min(minval, amap[i]/bmap[i]);
   }
 
-  count1 = minval;
-  b1 = count1;
-  if (count1 != 0){  
-    for (it = bmap.begin() ; it != bmap.end() ; it++){
-      it1 = amap.find(it->first);
-      it1->second = it1->second - count1*(it->second) ;
+  int bcount = minval;
+  int cur_b = -1;
+  int cur_c = -1;
+  for (int k = 0 ; k <= bcount ; k++){
+    minval = MAXN;
+    for (int i = 0 ; i < 26 ; i++){
+      if (cmap[i]) {
+        minval = min(minval, (amap[i] - k*bmap[i])/cmap[i]);
+      }
+    }
+
+    if (k + minval > cur_b + cur_c){
+      cur_b = k;
+      cur_c = minval;
+    }  
+  }
+
+  for (int i = 0 ; i < 26 ; i++){
+    amap[i] = amap[i] - cur_b*bmap[i] - cur_c*cmap[i];
+  }
+
+  string s = "";
+  while (cur_b--) s = s+b;
+  while (cur_c--) s = s+c;
+
+  for (int i = 0 ; i < 26 ; i++){
+    while (amap[i] != 0){
+      s=s+(char)(i+'a');
+      amap[i]--;
     }
   }
-  
-
-  minval = 100000000;
-    
-    for (it = cmap.begin() ; it != cmap.end() ; it++){
-      int val2 = it->second;
-      it1 = amap.find(it->first);
-      if (it1 == amap.end()){
-        minval = 0;
-        break;
-      }
-      else{
-        int val1 = it1->second;
-        int divnum = val1/val2;
-        minval = min(divnum,minval);
-      }
-    }
-    b2 = minval;
-    count1 +=minval;
-  return count1;
+  cout<<s<<endl;
+  return;
 }
 
 int main(){
@@ -64,71 +50,29 @@ int main(){
   string b;
   string c;
   cin >> a >> b >> c;
-  map<char,int> amap;
-  map<char,int> bmap;
-  map<char,int> cmap;
-  
+
+  int amap[26];
+  int bmap[26];
+  int cmap[26];
+
+
+  memset(amap, 0, sizeof(amap));
+  memset(bmap, 0, sizeof(bmap));
+  memset(cmap, 0, sizeof(cmap));
+
   for (int i=0 ; i < a.size() ; i++){
-    it = amap.find(a[i]);
-    if (it != amap.end()){
-      it->second +=1;
-    }
-    else{
-      amap.insert(pair<char,int>(a[i],1));
-    }
+    amap[a[i]-'a']++;
   }
 
   for (int i=0 ; i < b.size() ; i++){
-    it = bmap.find(b[i]);
-    if (it != bmap.end()){
-      it->second +=1;
-    }
-    else{
-      bmap.insert(pair<char,int>(b[i],1));
-    }
+   bmap[b[i]-'a']++;
   }
 
   for (int i=0 ; i < c.size() ; i++){
-    it = cmap.find(c[i]);
-    if (it != cmap.end()){
-      it->second +=1;
-    }
-    else{
-      cmap.insert(pair<char,int>(c[i],1));
-    }
-  }
+   cmap[c[i]-'a']++;
+  }  
 
-  int count1 = countFunction(amap, bmap, cmap);
-  b3 = b1;
-  b4 = b2;
-  int count2 = countFunction(amap, cmap, bmap);
-  string s="";
-  if (count1 >= count2){  
-    while(b3--) s=s+b;
-    while(b4--) s=s+c;
-  }
-
-  else{
-    while(b1--) s=s+c;
-    while(b2--) s=s+b;
-  }
-
-  for (int i = 0 ; i < s.size() ; i++){
-    it1=amap.find(s[i]);
-    it1->second = it1->second -1;
-  }
-
-  for (it = amap.begin() ; it!= amap.end() ; it++){
-    while (it->second != 0){
-      s=s+(it->first);
-      it->second = it->second -1;
-    }
-  }
-  cout<<s<<endl;
-
-
-
-
+  countFunction(amap, bmap, cmap, a, b, c);  
   return 0;
 }
 
