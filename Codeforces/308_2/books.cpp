@@ -28,7 +28,6 @@ int main(){
  
   llint count = 0;
   llint reminder = n - array[num_digits-1];
-//  cout<<"reminder is "<<reminder<<endl;
   count = count + num_digits*(reminder + 1);
  // cout<<"hello "<<count<<endl;
   for (llint i = num_digits-1 ; i > 0 ; i--){
